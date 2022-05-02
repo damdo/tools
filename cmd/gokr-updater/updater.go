@@ -8,7 +8,7 @@ import (
 	"net/url"
 	"os"
 
-	"github.com/gokrazy/internal/httpclient"
+	"github.com/damdo/internal/httpclient"
 	"github.com/gokrazy/updater"
 )
 

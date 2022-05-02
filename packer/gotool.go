@@ -11,7 +11,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/gokrazy/tools/internal/measure"
+	"github.com/damdo/tools/internal/measure"
 	"golang.org/x/sync/errgroup"
 )
 

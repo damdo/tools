@@ -10,11 +10,11 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/gokrazy/internal/config"
-	"github.com/gokrazy/internal/humanize"
-	"github.com/gokrazy/internal/progress"
-	"github.com/gokrazy/internal/updateflag"
-	"github.com/gokrazy/tools/packer"
+	"github.com/damdo/internal/config"
+	"github.com/damdo/internal/humanize"
+	"github.com/damdo/internal/progress"
+	"github.com/damdo/internal/updateflag"
+	"github.com/damdo/tools/packer"
 	"github.com/gokrazy/updater"
 	"github.com/spf13/cobra"
 )

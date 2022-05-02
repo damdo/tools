@@ -17,14 +17,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gokrazy/internal/deviceconfig"
-	"github.com/gokrazy/internal/fat"
-	"github.com/gokrazy/internal/humanize"
-	"github.com/gokrazy/internal/mbr"
-	"github.com/gokrazy/internal/squashfs"
-	"github.com/gokrazy/tools/internal/measure"
-	"github.com/gokrazy/tools/packer"
-	"github.com/gokrazy/tools/third_party/systemd-248.3-2"
+	"github.com/damdo/internal/deviceconfig"
+	"github.com/damdo/internal/fat"
+	"github.com/damdo/internal/humanize"
+	"github.com/damdo/internal/mbr"
+	"github.com/damdo/internal/squashfs"
+	"github.com/damdo/tools/internal/measure"
+	"github.com/damdo/tools/packer"
+	"github.com/damdo/tools/third_party/systemd-248.3-2"
 )
 
 var (

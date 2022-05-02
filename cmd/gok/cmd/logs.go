@@ -11,8 +11,8 @@ import (
 	"strings"
 
 	"github.com/donovanhide/eventsource"
-	"github.com/gokrazy/internal/config"
-	"github.com/gokrazy/internal/updateflag"
+	"github.com/damdo/internal/config"
+	"github.com/damdo/internal/updateflag"
 	"github.com/spf13/cobra"
 	"golang.org/x/sync/errgroup"
 )

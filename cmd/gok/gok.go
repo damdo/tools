@@ -4,7 +4,7 @@
 // etc.
 package main
 
-import "github.com/gokrazy/tools/cmd/gok/cmd"
+import "github.com/damdo/tools/cmd/gok/cmd"
 
 func main() {
 	cmd.Execute()

@@ -9,7 +9,7 @@ import (
 	"os/user"
 	"path/filepath"
 
-	"github.com/gokrazy/internal/config"
+	"github.com/damdo/internal/config"
 )
 
 func randomChar() (byte, error) {

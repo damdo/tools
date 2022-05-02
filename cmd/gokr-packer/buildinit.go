@@ -11,7 +11,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/gokrazy/tools/packer"
+	"github.com/damdo/tools/packer"
 )
 
 const initTmplContents = `

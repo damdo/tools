@@ -27,14 +27,14 @@ import (
 	// Imported so that the go tool will download the repositories
 	_ "github.com/gokrazy/gokrazy/empty"
 
-	"github.com/gokrazy/internal/deviceconfig"
-	"github.com/gokrazy/internal/httpclient"
-	"github.com/gokrazy/internal/humanize"
-	"github.com/gokrazy/internal/progress"
-	"github.com/gokrazy/internal/tlsflag"
-	"github.com/gokrazy/internal/updateflag"
-	"github.com/gokrazy/tools/internal/measure"
-	"github.com/gokrazy/tools/packer"
+	"github.com/damdo/internal/deviceconfig"
+	"github.com/damdo/internal/httpclient"
+	"github.com/damdo/internal/humanize"
+	"github.com/damdo/internal/progress"
+	"github.com/damdo/internal/tlsflag"
+	"github.com/damdo/internal/updateflag"
+	"github.com/damdo/tools/internal/measure"
+	"github.com/damdo/tools/packer"
 	"github.com/gokrazy/updater"
 )
 
@@ -101,7 +101,7 @@ var (
 
 	deviceType = flag.String("device_type",
 		"",
-		`Device type identifier (defined in github.com/gokrazy/internal/deviceconfig) used for applying device-specific modifications to gokrazy.
+		`Device type identifier (defined in github.com/damdo/internal/deviceconfig) used for applying device-specific modifications to gokrazy.
 e.g. -device_type=odroidhc1 to apply MBR changes and device-specific bootloader files for Odroid XU4/HC1/HC2.
 Defaults to an empty string.`)
 )
@@ -756,7 +756,7 @@ type offsetReadSeeker struct {
 
 func (ors *offsetReadSeeker) Seek(offset int64, whence int) (int64, error) {
 	if whence == io.SeekStart {
-		// github.com/gokrazy/internal/fat.Reader only uses io.SeekStart
+		// github.com/damdo/internal/fat.Reader only uses io.SeekStart
 		return ors.ReadSeeker.Seek(offset+ors.offset, io.SeekStart)
 	}
 	return ors.ReadSeeker.Seek(offset, whence)

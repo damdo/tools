@@ -15,7 +15,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/gokrazy/internal/tlsflag"
+	"github.com/damdo/internal/tlsflag"
 )
 
 func generateAndSignCert() ([]byte, *rsa.PrivateKey, error) {

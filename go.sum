@@ -60,6 +60,8 @@ github.com/cncf/udpa/go v0.0.0-20201120205902-5459f2c99403/go.mod h1:WmhPx2Nbnht
 github.com/coreos/go-semver v0.3.0/go.mod h1:nnelYz7RCh+5ahJtPPxZlU+153eP4D4r3EedlOD2RNk=
 github.com/coreos/go-systemd/v22 v22.3.2/go.mod h1:Y58oyj3AT4RCenI/lSvhwexgC+NSVTIJ3seZv2GcEnc=
 github.com/cpuguy83/go-md2man/v2 v2.0.0/go.mod h1:maD7wRr/U5Z6m/iR4s+kqSMx2CaBsrgA7czyZG/E6dU=
+github.com/damdo/internal v0.0.0-20220502230611-030ae0a4191b h1:vXRMbXmaStzZS02DnvqU0p56TYIdjeQyeZnO8TJIJw4=
+github.com/damdo/internal v0.0.0-20220502230611-030ae0a4191b/go.mod h1:z75XI+qYatLnOQTpP7ByypTKLB8Ou/CuX3zM/Qq5ac4=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/donovanhide/eventsource v0.0.0-20210830082556-c59027999da0 h1:C7t6eeMaEQVy6e8CarIhscYQlNmw5e3G36y7l7Y21Ao=
@@ -82,12 +84,6 @@ github.com/gogo/protobuf v1.3.2/go.mod h1:P1XiOD3dCwIKUDQYPy72D8LYyHL2YPYrpS2s69
 github.com/gokrazy/gokrazy v0.0.0-20220113081925-ca0fa4174944 h1:aZgg4MvvoNdhEgfKxCNi3eCjvtfcJBS3GklxM09Ob4I=
 github.com/gokrazy/gokrazy v0.0.0-20220113081925-ca0fa4174944/go.mod h1:z9nzDhiz6f52Zp21WSGnRzW2MlLBrsJdNLxXZoMti2w=
 github.com/gokrazy/internal v0.0.0-20220111191949-698f19a074ef/go.mod h1:Gc9sU6yJ/qxg3gJZ1pjfcTAULa0swdTa4TH51g1e00E=
-github.com/gokrazy/internal v0.0.0-20220129150711-9ed298107648 h1:kBuLicM0xJw3xEe4607WlnzGL+qSwPqdyh5/LUiCdq0=
-github.com/gokrazy/internal v0.0.0-20220129150711-9ed298107648/go.mod h1:Gc9sU6yJ/qxg3gJZ1pjfcTAULa0swdTa4TH51g1e00E=
-github.com/gokrazy/internal v0.0.0-20220430192058-b97ccfa731f4 h1:xspWD0j6o6lWJvmLmRxf1IVArrc0Z+eOetyvbfQR+Kk=
-github.com/gokrazy/internal v0.0.0-20220430192058-b97ccfa731f4/go.mod h1:Gc9sU6yJ/qxg3gJZ1pjfcTAULa0swdTa4TH51g1e00E=
-github.com/gokrazy/internal v0.0.0-20220430192544-1821f343e404 h1:2VNhTnO4DjxaH6U/hpFMzllkSyBL4aPRabMxMVuuhJs=
-github.com/gokrazy/internal v0.0.0-20220430192544-1821f343e404/go.mod h1:Gc9sU6yJ/qxg3gJZ1pjfcTAULa0swdTa4TH51g1e00E=
 github.com/gokrazy/updater v0.0.0-20211121155532-30ae8cd650ea h1:NM/sLCKWWc9mnMtJZGbwOtaAwEpCEe6tlcXWKp3LEKk=
 github.com/gokrazy/updater v0.0.0-20211121155532-30ae8cd650ea/go.mod h1:PYOvzGOL4nlBmuxu7IyKQTFLaxr61+WPRNRzVtuYOHw=
 github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b/go.mod h1:SBH7ygxi8pfUlaOkMMuAQtPIUF8ecWP5IEl/CR7VP2Q=

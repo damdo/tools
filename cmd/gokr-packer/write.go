@@ -324,27 +324,11 @@ func (p *pack) writeBoot(f io.Writer, mbrfilename string) error {
 			return err
 		}
 
-		srcarm, err := systemd.SystemdBootAArch64.Open("BOOTAA64.EFI")
+		srcarm, err := systemd.SystemdBootAA64.Open("systemd-bootaa64.efi")
 		if err != nil {
 			return err
 		}
 		if err := copyFile(fw, "/EFI/BOOT/BOOTAA64.EFI", srcarm); err != nil {
-			return err
-		}
-
-		srcgrub, err := systemd.SystemdBootGrub.Open("grub.efi")
-		if err != nil {
-			return err
-		}
-		if err := copyFile(fw, "/EFI/BOOT/grub.efi", srcgrub); err != nil {
-			return err
-		}
-
-		srcgrubcfg, err := systemd.SystemdBootGrubCfg.Open("grub.cfg")
-		if err != nil {
-			return err
-		}
-		if err := copyFile(fw, "/EFI/BOOT/grub.cfg", srcgrubcfg); err != nil {
 			return err
 		}
 	}

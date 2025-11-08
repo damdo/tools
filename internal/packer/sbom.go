@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"sort"
 	"strings"
 	"sync"
@@ -14,6 +15,7 @@ import (
 	"github.com/gokrazy/internal/config"
 	"github.com/gokrazy/tools/internal/buildid"
 	"github.com/gokrazy/tools/packer"
+	"golang.org/x/mod/modfile"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -41,6 +43,19 @@ type GoPackage struct {
 	BuildInfo string
 }
 
+// SystemPackage identifies non-Go system packages (kernel, firmware, EEPROM)
+// by their module path, version, and the hashes of their binary files.
+type SystemPackage struct {
+	// ModulePath is the Go module path (e.g., github.com/gokrazy/kernel)
+	ModulePath string `json:"module_path"`
+
+	// Version is the module version from go.mod
+	Version string `json:"version"`
+
+	// FileHashes contains hashes of the actual binary files provided by this package
+	FileHashes []FileHash `json:"file_hashes"`
+}
+
 type SBOM struct {
 	// ConfigHash is the SHA256 sum of the gokrazy instance config (loaded
 	// from config.json).
@@ -55,6 +70,9 @@ type SBOM struct {
 	// GoPackages contains one entry per installed package of the gokrazy
 	// instance.
 	GoPackages []GoPackage `json:"go_packages"`
+
+	// SystemPackages contains entries for kernel, firmware, and EEPROM packages.
+	SystemPackages []SystemPackage `json:"system_packages"`
 }
 
 type SBOMWithHash struct {
@@ -136,6 +154,25 @@ func generateSBOM(cfg *config.Struct, foundBins []foundBin) ([]byte, SBOMWithHas
 		return nil, SBOMWithHash{}, err
 	}
 
+	// Track system packages (e.g. kernel, firmware, EEPROM)
+	systemPkgs := []string{cfg.KernelPackageOrDefault()}
+	if fw := cfg.FirmwarePackageOrDefault(); fw != "" {
+		systemPkgs = append(systemPkgs, fw)
+	}
+	if e := cfg.EEPROMPackageOrDefault(); e != "" {
+		systemPkgs = append(systemPkgs, e)
+	}
+
+	for _, pkgPath := range systemPkgs {
+		sysPkg, err := generateSystemPackage(cfg, pkgPath)
+		if err != nil {
+			return nil, SBOMWithHash{}, fmt.Errorf("system package %s: %w", pkgPath, err)
+		}
+		if sysPkg != nil {
+			result.SystemPackages = append(result.SystemPackages, *sysPkg)
+		}
+	}
+
 	extraFiles, err := FindExtraFiles(cfg)
 	if err != nil {
 		return nil, SBOMWithHash{}, err
@@ -181,6 +218,10 @@ func generateSBOM(cfg *config.Struct, foundBins []foundBin) ([]byte, SBOMWithHas
 		return pi.Path < pj.Path
 	})
 
+	sort.Slice(result.SystemPackages, func(i, j int) bool {
+		return result.SystemPackages[i].ModulePath < result.SystemPackages[j].ModulePath
+	})
+
 	sort.Slice(result.ExtraFileHashes, func(i, j int) bool {
 		a := result.ExtraFileHashes[i]
 		b := result.ExtraFileHashes[j]
@@ -205,6 +246,100 @@ func generateSBOM(cfg *config.Struct, foundBins []foundBin) ([]byte, SBOMWithHas
 	sM = append(sM, '\n')
 
 	return sM, sH, nil
+}
+
+func generateSystemPackage(cfg *config.Struct, pkgPath string) (*SystemPackage, error) {
+	// Strip version suffix if present
+	pkg := pkgPath
+	if idx := strings.IndexByte(pkg, '@'); idx > -1 {
+		pkg = pkg[:idx]
+	}
+
+	// Get the package directory
+	pkgDir, err := packer.PackageDir(pkgPath)
+	if err != nil {
+		return nil, err
+	}
+
+	// Read go.mod to get module path and version
+	goModPath := filepath.Join(pkgDir, "go.mod")
+	goModBytes, err := os.ReadFile(goModPath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			// If there's no go.mod, skip this package
+			return nil, nil
+		}
+		return nil, fmt.Errorf("reading go.mod: %w", err)
+	}
+
+	modf, err := modfile.Parse("go.mod", goModBytes, nil)
+	if err != nil {
+		return nil, fmt.Errorf("parsing go.mod: %w", err)
+	}
+
+	sysPkg := &SystemPackage{
+		ModulePath: modf.Module.Mod.Path,
+		Version:    modf.Module.Mod.Version,
+	}
+
+	// If version is empty (happens for local modules), try to extract from package path
+	if sysPkg.Version == "" && strings.Contains(pkgPath, "@") {
+		parts := strings.SplitN(pkgPath, "@", 2)
+		if len(parts) == 2 {
+			sysPkg.Version = parts[1]
+		}
+	}
+
+	// Hash binary files in the package directory
+	// For kernel packages, look for vmlinuz, bzImage, kernel files
+	// For firmware/EEPROM, hash all binary files
+	err = filepath.Walk(pkgDir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if info.IsDir() {
+			// Skip hidden directories and typical non-binary directories
+			if strings.HasPrefix(info.Name(), ".") || info.Name() == "testdata" {
+				return filepath.SkipDir
+			}
+			return nil
+		}
+
+		// Skip text files and Go source
+		ext := filepath.Ext(path)
+		if ext == ".go" || ext == ".mod" || ext == ".sum" || ext == ".txt" || ext == ".md" {
+			return nil
+		}
+
+		// Read and hash the file
+		data, err := os.ReadFile(path)
+		if err != nil {
+			return err
+		}
+
+		// Only include files that are likely binaries (non-empty and not tiny text files)
+		if len(data) > 0 {
+			relPath, err := filepath.Rel(pkgDir, path)
+			if err != nil {
+				relPath = path
+			}
+			sysPkg.FileHashes = append(sysPkg.FileHashes, FileHash{
+				Path: relPath,
+				Hash: fmt.Sprintf("%x", sha256.Sum256(data)),
+			})
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, fmt.Errorf("walking package directory: %w", err)
+	}
+
+	// Sort file hashes for consistent output
+	sort.Slice(sysPkg.FileHashes, func(i, j int) bool {
+		return sysPkg.FileHashes[i].Path < sysPkg.FileHashes[j].Path
+	})
+
+	return sysPkg, nil
 }
 
 func getGokrazySystemPackages(cfg *config.Struct) []string {

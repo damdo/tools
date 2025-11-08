@@ -1,4 +1,4 @@
-module github.com/gokrazy/tools
+module github.com/damdo/tools
 
 go 1.24.0
 
